@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd /root
+
 # Install Python 3.6 and create a virtual environment
 
 sudo yum install -y epel-release
