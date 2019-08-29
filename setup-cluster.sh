@@ -1,9 +1,21 @@
 #!/bin/bash
 
+touch ~/t.t
+echo "woof" > ~/t.t
+echo $1 >> ~/t.t
+echo $2 >> ~/t.t
+echo $3 >> ~/t.t
+echo $4 >> ~/t.t
+
 APP_ID=$1
 PASSWORD=$2
 TENANT_ID=$3
 SUBSCRIPTION_ID=$4
+
+echo $APP_ID >> ~/t.t
+echo $PASSWORD >> ~/t.t
+echo $TENANT_ID >> ~/t.t
+echo $SUBSCRIPTION_ID >> ~/t.t
 
 cd ~
 
