@@ -1,30 +1,9 @@
 #!/bin/bash
 
-echo "1" > ~/t.t
-
-echo $1 >> ~/t.t
-echo $2 >> ~/t.t
-echo $3 >> ~/t.t
-echo $4 >> ~/t.t
-
-echo "2" >> ~/t.t
 APP_ID="$1"
-echo "3" >> ~/t.t
 PASSWORD="$2"
-echo "4" >> ~/t.t
 TENANT_ID="$3"
-echo "5" >> ~/t.t
 SUBSCRIPTION_ID="$4"
-echo "6" >> ~/t.t
-
-echo "$APP_ID" >> ~/t.t
-echo "7" >> ~/t.t
-echo "$PASSWORD" >> ~/t.t
-echo "8" >> ~/t.t
-echo "$TENANT_ID" >> ~/t.t
-echo "9" >> ~/t.t
-echo "$SUBSCRIPTION_ID" >> ~/t.t
-echo "10" >> ~/t.t
 
 cd ~
 
@@ -71,9 +50,8 @@ cd ~
 
 # Update muchos.props
 
-#/bin/cp ~/fluo-muchos/conf/muchos.props.example ~/fluo-muchos/conf/muchos.props
-#touch ~/t.t
-#echo $APP_ID > ~/t.t
-#echo $PASSWORD >> ~/t.t
-#echo $TENANT_ID >> ~/t.t
-#echo $SUBSCRIPTION_ID >> ~/t.t
+/bin/cp ~/fluo-muchos/conf/muchos.props.example ~/fluo-muchos/conf/muchos.props
+echo "$APP_ID" > ~/t.t
+echo "$PASSWORD" >> ~/t.t
+echo "$TENANT_ID" >> ~/t.t
+echo "$SUBSCRIPTION_ID" >> ~/t.t
