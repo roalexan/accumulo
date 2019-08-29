@@ -71,9 +71,9 @@ cd ~
 
 # Update muchos.props
 
-/bin/cp ~/fluo-muchos/conf/muchos.props.example ~/fluo-muchos/conf/muchos.props
-touch ~/t.t
-echo $APP_ID > ~/t.t
-echo $PASSWORD >> ~/t.t
-echo $TENANT_ID >> ~/t.t
-echo $SUBSCRIPTION_ID >> ~/t.t
+#/bin/cp ~/fluo-muchos/conf/muchos.props.example ~/fluo-muchos/conf/muchos.props
+#touch ~/t.t
+#echo $APP_ID > ~/t.t
+#echo $PASSWORD >> ~/t.t
+#echo $TENANT_ID >> ~/t.t
+#echo $SUBSCRIPTION_ID >> ~/t.t
