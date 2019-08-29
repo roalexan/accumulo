@@ -45,13 +45,10 @@ cd ~
 #sudo sh -c 'echo -e "[azure-cli]\nname=Azure CLI\nbaseurl=https://packages.microsoft.com/yumrepos/azure-cli\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/azure-cli.repo'
 #sudo yum install -y azure-cli
 #sed -i '/^PYTHONPATH=/c\PYTHONPATH=/usr/lib64/az/lib/python2.7/site-packages python2 -sm azure.cli "$@"' $(which az)
-#az login --service-principal --username $APP_ID --password $PASSWORD --tenant $TENANT_ID
-#az account set --subscription $SUBSCRIPTION_ID
+#az login --service-principal --username "$APP_ID" --password "$PASSWORD" --tenant "$TENANT_ID"
+#az account set --subscription "$SUBSCRIPTION_ID"
 
 # Update muchos.props
 
 /bin/cp ~/fluo-muchos/conf/muchos.props.example ~/fluo-muchos/conf/muchos.props
-echo "$APP_ID" > ~/t.t
-echo "$PASSWORD" >> ~/t.t
-echo "$TENANT_ID" >> ~/t.t
-echo "$SUBSCRIPTION_ID" >> ~/t.t
+sed -i '/^cluster_type =/c\cluster_type = azure' ~/fluo-muchos/conf/muchos.props
