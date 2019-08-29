@@ -50,7 +50,7 @@ cd ~
 
 # Update muchos.props
 
-cp ~/fluo-muchos/conf/muchos.props.example ~/fluo-muchos/conf/muchos.props
+/bin/cp ~/fluo-muchos/conf/muchos.props.example ~/fluo-muchos/conf/muchos.props
 touch ~/t.t
 echo $APP_ID > ~/t.t
 echo $PASSWORD >> ~/t.t
