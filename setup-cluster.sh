@@ -1,9 +1,9 @@
 #!/bin/bash
 
-APP_ID = $1
-PASSWORD = $2
-TENANT_ID = $3
-SUBSCRIPTION_ID = $4
+APP_ID=$1
+PASSWORD=$2
+TENANT_ID=$3
+SUBSCRIPTION_ID=$4
 
 cd ~
 
