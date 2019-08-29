@@ -52,3 +52,9 @@ cd ~
 
 /bin/cp ~/fluo-muchos/conf/muchos.props.example ~/fluo-muchos/conf/muchos.props
 sed -i '/^cluster_type =/c\cluster_type = azure' ~/fluo-muchos/conf/muchos.props
+sed -i '/^cluster_user =/c\cluster_user = rba1' ~/fluo-muchos/conf/muchos.props
+sed -i '/^hadoop_version =/c\hadoop_version = 3.2.0' ~/fluo-muchos/conf/muchos.props
+sed -i '/^spark_version =/c\spark_version = 2.4.3' ~/fluo-muchos/conf/muchos.props
+sed -i '/^accumulo_version =/c\accumulo_version = 2.0.0' ~/fluo-muchos/conf/muchos.props
+sed -i '/^nameservice_id =/c\nameservice_id = rbaaccucluster' ~/fluo-muchos/conf/muchos.props
+sed -i '/^profile=/c\profile=perf-small' ~/fluo-muchos/conf/muchos.props
