@@ -1,6 +1,10 @@
 #!/bin/bash
 cd ~
 
+echoerr() {
+	echo "$@" 1>&2;
+}
+
 date | tee setup-cluster.log
 echo "Read the options" | tee --append setup-cluster.log
 TEMP=`getopt -o a:p:t:s: --long app-id:,password:,tenant-id:,subscription-id: -- "$@"`
@@ -18,27 +22,27 @@ while true ; do
         -s|--subscription-id)
             subscriptionId=$2 ; shift 2;;
         --) shift ; break ;;
-        *) echo "ERROR: Unable to get variables from arguments" ; exit 1 ;;
+        *) echoerr "ERROR: Unable to get variables from arguments" ; exit 1 ;;
     esac
 done
 if [ -z "$appId" ]
 then
-    echo "Missing required argument: -a | app-id" | tee --append setup-cluster.log
+    echoerr "Missing required argument: -a | app-id" | tee --append setup-cluster.log
     exit 1
 fi
 if [ -z "$password" ]
 then
-    echo "Missing required argument: -p | password" | tee --append setup-cluster.log
+    echoerr "Missing required argument: -p | password" | tee --append setup-cluster.log
     exit 1
 fi
 if [ -z "$tenantId" ]
 then
-    echo "Missing required argument: -t | tenant-id" | tee --append setup-cluster.log
+    echoerr "Missing required argument: -t | tenant-id" | tee --append setup-cluster.log
     exit 1
 fi
 if [ -z "$subscriptionId" ]
 then
-    echo "Missing required argument: -s | subscription-id" | tee --append setup-cluster.log
+    echoerr "Missing required argument: -s | subscription-id" | tee --append setup-cluster.log
     exit 1
 fi
 
