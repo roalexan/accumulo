@@ -20,6 +20,9 @@ while true ; do
         *) echo "ERROR: Unable to get variables from arguments" ; exit 1 ;;
     esac
 done
+echo "appId: "$appId >> setup-cluster.log
+echo "tenantId: "$tenantId >> setup-cluster.log
+echo "subscriptionId: "$subscriptionId >> setup-cluster.log
 
 echo "Install Python 3.6 and create a virtual environment" >> setup-cluster.log
 #sudo yum install -y epel-release
