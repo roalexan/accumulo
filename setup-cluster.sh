@@ -1,11 +1,12 @@
 #!/bin/bash
 cd ~
 
-echo "Read the options" > setup-cluster.log
-TEMP=`getopt -o a:p:t:s: --long app-id:,password:,tenant-id: -- "$@"`
+date | tee setup-cluster.log
+echo "Read the options" | tee --append setup-cluster.log
+TEMP=`getopt -o a:p:t:s: --long app-id:,password:,tenant-id:,subscription-id: -- "$@"`
 eval set -- "$TEMP"
 
-echo "Extract options and their arguments into variables" >> setup-cluster.log
+echo "Extract options and their arguments into variables" | tee --append setup-cluster.log
 while true ; do
     case "$1" in
         -a|--app-id)
@@ -20,18 +21,35 @@ while true ; do
         *) echo "ERROR: Unable to get variables from arguments" ; exit 1 ;;
     esac
 done
-echo "appId: "$appId >> setup-cluster.log
-echo "tenantId: "$tenantId >> setup-cluster.log
-echo "subscriptionId: "$subscriptionId >> setup-cluster.log
+if [ -z "$appId" ]
+then
+    echo "Missing required argument: -a | app-id" | tee --append setup-cluster.log
+    exit 1
+fi
+if [ -z "$password" ]
+then
+    echo "Missing required argument: -p | password" | tee --append setup-cluster.log
+    exit 1
+fi
+if [ -z "$tenantId" ]
+then
+    echo "Missing required argument: -t | tenant-id" | tee --append setup-cluster.log
+    exit 1
+fi
+if [ -z "$subscriptionId" ]
+then
+    echo "Missing required argument: -s | subscription-id" | tee --append setup-cluster.log
+    exit 1
+fi
 
-echo "Install Python 3.6 and create a virtual environment" >> setup-cluster.log
+echo "Install Python 3.6 and create a virtual environment" | tee --append setup-cluster.log
 #sudo yum install -y epel-release
 #sudo yum install -y python36 python36-devel python36-setuptools
 #sudo python36 /usr/lib/python3.6/site-packages/easy_install.py pip
 #python3.6 -m venv ~/env
 #source ~/env/bin/activate
 
-echo "Install Ansible and VMSS (virtual machine scale set) patch" >> setup-cluster.log
+echo "Install Ansible and VMSS (virtual machine scale set) patch" | tee --append setup-cluster.log
 #sudo yum check-update
 #sudo yum install -y gcc libffi-devel python-devel openssl-devel
 #sudo yum install -y python-pip python-wheel
@@ -40,19 +58,19 @@ echo "Install Ansible and VMSS (virtual machine scale set) patch" >> setup-clust
 #git clone https://github.com/ansible/ansible
 #cp ansible/lib/ansible/modules/cloud/azure/azure_rm_virtualmachinescaleset.py env/lib/python3.6/site-packages/ansible/modules/cloud/azure/
 
-echo "Download the Magna Carta repo zip" >> setup-cluster.log
+echo "Download the Magna Carta repo zip" | tee --append setup-cluster.log
 #ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -q -N ""
 #mkdir ~/fluo-muchos
 #wget https://roalexan.blob.core.windows.net/accumulo/fluo-muchos.zip --output-document ~/fluo-muchos/fluo-muchos.zip
 #unzip ~/fluo-muchos/fluo-muchos.zip -d ~/fluo-muchos
 
-echo "Setup agent forwarding" >> setup-cluster.log
+echo "Setup agent forwarding" | tee --append setup-cluster.log
 #export ANSIBLE_HOST_KEY_CHECKING=False
 #export ANSIBLE_LOG_PATH=~/play.log
 #eval $(ssh-agent -s)
 #ssh-add ~/.ssh/id_rsa
 
-echo "Install Azure CLI" >> setup-cluster.log
+echo "Install Azure CLI" | tee --append setup-cluster.log
 #sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
 #sudo sh -c 'echo -e "[azure-cli]\nname=Azure CLI\nbaseurl=https://packages.microsoft.com/yumrepos/azure-cli\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/azure-cli.repo'
 #sudo yum install -y azure-cli
@@ -60,7 +78,7 @@ echo "Install Azure CLI" >> setup-cluster.log
 #az login --service-principal --username "$APP_ID" --password "$PASSWORD" --tenant "$TENANT_ID"
 #az account set --subscription "$subscriptionId"
 
-echo "Update muchos.props" >> setup-cluster.log
+echo "Update muchos.props" | tee --append setup-cluster.log
 /bin/cp ~/fluo-muchos/conf/muchos.props.example ~/fluo-muchos/conf/muchos.props
 sed -i '/^cluster_type =/c\cluster_type = azure' ~/fluo-muchos/conf/muchos.props
 sed -i '/^cluster_user =/c\cluster_user = rba1' ~/fluo-muchos/conf/muchos.props
