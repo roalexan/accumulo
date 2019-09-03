@@ -100,11 +100,17 @@ echo "Update muchos.props" | tee --append setup-cluster.log
 #sed -i '/^profile=/c\profile=perf-small' ~/fluo-muchos/conf/muchos.props
 #sed -i "/^resource_group =/c\resource_group = $resourceGroup" ~/fluo-muchos/conf/muchos.props
 
-vnet=$(az network vnet list --subscription $subscriptionId --resource-group $resourceGroup --query '[0].{Name:name}.Name' | cut -d \" -f2)
+vnet=$(az network vnet list --subscription $subscriptionId --resource-group $resourceGroup --query '[0].name' | cut -d \" -f2)
 sed -i "/^vnet =/c\vnet = $vnet" ~/fluo-muchos/conf/muchos.props
 
-vnetCidr=$(az network vnet list --subscription $subscriptionId --resource-group $resourceGroup --query '[0].{AddressSpace:addressSpace.addressPrefixes[0]}.AddressSpace' | cut -d \" -f2)
+vnetCidr=$(az network vnet list --subscription $subscriptionId --resource-group $resourceGroup --query '[0].addressSpace.addressPrefixes[0]' | cut -d \" -f2)
 sed -i "/^vnet_cidr =/c\vnet_cidr = $vnetCidr" ~/fluo-muchos/conf/muchos.props
+
+subnet=$(az network vnet list --subscription $subscriptionId --resource-group $resourceGroup --query '[0].subnets[0].name' | cut -d \" -f2)
+sed -i "/^subnet =/c\subnet = $subnet" ~/fluo-muchos/conf/muchos.props
+
+subnetCidr=$(az network vnet list --subscription $subscriptionId --resource-group $resourceGroup --query '[0].subnets[0].addressPrefix' | cut -d \" -f2)
+sed -i "/^subnet_cidr =/c\subnet_cidr = $subnetCidr" ~/fluo-muchos/conf/muchos.props
 
 	#az network vnet list --subscription 6187b663-b744-4d24-8226-7e66525baf8f --resource-group rbaAccumulo7-rg --query '[0].{Name:name}.Name'
 	#vnet="$(az network vnet list --subscription 6187b663-b744-4d24-8226-7e66525baf8f --resource-group rbaAccumulo7-rg --query '[0].{Name:name}.Name')"
@@ -112,6 +118,10 @@ sed -i "/^vnet_cidr =/c\vnet_cidr = $vnetCidr" ~/fluo-muchos/conf/muchos.props
 	
 	#az network vnet list --subscription 6187b663-b744-4d24-8226-7e66525baf8f --resource-group rbaAccumulo7-rg --query '[0].{AddressSpace:addressSpace.addressPrefixes[0]}.AddressSpace'
 	#vnetAddressSpace=$(az network vnet list --subscription 6187b663-b744-4d24-8226-7e66525baf8f --resource-group rbaAccumulo7-rg --query '[0].{AddressSpace:addressSpace.addressPrefixes[0]}.AddressSpace' | cut -d \" -f2)
+	
+	#subnet=$(az network vnet list --subscription 6187b663-b744-4d24-8226-7e66525baf8f --resource-group rbaAccumulo7-rg --query '[0].subnets[0].name' | cut -d \" -f2)
+	
+	#az network vnet list --subscription 6187b663-b744-4d24-8226-7e66525baf8f --resource-group rbaAccumulo7-rg --query '[0].subnets[0].addressPrefix'
 	
 	#[
 	#  {
