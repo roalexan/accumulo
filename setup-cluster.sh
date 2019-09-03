@@ -98,12 +98,32 @@ echo "Update muchos.props" | tee --append setup-cluster.log
 #sed -i '/^accumulo_version =/c\accumulo_version = 2.0.0' ~/fluo-muchos/conf/muchos.props
 #sed -i '/^nameservice_id =/c\nameservice_id = rbaaccucluster' ~/fluo-muchos/conf/muchos.props
 #sed -i '/^profile=/c\profile=perf-small' ~/fluo-muchos/conf/muchos.props
+#sed -i "/^resource_group =/c\resource_group = $resourceGroup" ~/fluo-muchos/conf/muchos.props
 
-sed -i "/^resource_group =/c\resource_group = $resourceGroup" ~/fluo-muchos/conf/muchos.props
+vnet=$(az network vnet list --subscription $subscriptionId --resource-group $resourceGroup --query '[0].{Name:name}.Name' | cut -d \" -f2)
+sed -i "/^vnet =/c\vnet = $vnet" ~/fluo-muchos/conf/muchos.props
 
+	#az network vnet list --subscription 6187b663-b744-4d24-8226-7e66525baf8f --resource-group rbaAccumulo7-rg --query '[0].{Name:name}.Name'
+	#vnet="$(az network vnet list --subscription 6187b663-b744-4d24-8226-7e66525baf8f --resource-group rbaAccumulo7-rg --query '[0].{Name:name}.Name')"
 
-#			resource_group = <your resource group name>
-#				example: MC-WebScaleAI-2
+	#vnet=$(az network vnet list --subscription 6187b663-b744-4d24-8226-7e66525baf8f --resource-group rbaAccumulo7-rg --query '[0].{Name:name}.Name' | cut -d \" -f2)
+	
+	#[
+	#  {
+	#	"addressSpace": {
+	#	  "addressPrefixes": [
+	#		"10.0.0.0/16"
+	#	  ]
+	#	},
+	#	"ddosProtectionPlan": null,
+	#	"dhcpOptions": null,
+	#	"enableDdosProtection": false,
+	#	"enableVmProtection": false,
+	#	"etag": "W/\"07486bc2-be4c-461e-b3d4-009ad2999115\"",
+	#	"id": "/subscriptions/6187b663-b744-4d24-8226-7e66525baf8f/resourceGroups/rbaAccumulo7-rg/providers/Microsoft.Network/virtualNetworks/rbaJumpBox-vmVNET",
+	#	"location": "eastus",
+	#	"name": "rbaJumpBox-vmVNET",
+	
 #			vnet = <your vnet, from the portal>
 #				example: rbaJumpBox-vmVNET
 #			vnet_cidr = <your vnet address space, from the portal>
