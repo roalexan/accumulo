@@ -112,13 +112,13 @@ sed -i "/^subnet =/c\subnet = $subnet" ~/fluo-muchos/conf/muchos.props
 subnetCidr=$(az network vnet list --subscription $subscriptionId --resource-group $resourceGroup --query '[0].subnets[0].addressPrefix' | cut -d \" -f2)
 sed -i "/^subnet_cidr =/c\subnet_cidr = $subnetCidr" ~/fluo-muchos/conf/muchos.props
 
-numnodes = 8
+numnodes="8"
 sed -i "/^numnodes =/c\numnodes = $numnodes" ~/fluo-muchos/conf/muchos.props
 
-vm_sku = "Standard_D8s_v3"
+vm_sku="Standard_D8s_v3"
 sed -i "/^vm_sku =/c\vm_sku = $vm_sku" ~/fluo-muchos/conf/muchos.props
 
-location = "eastus"
+location="eastus"
 sed -i "/^location =/c\location = $location" ~/fluo-muchos/conf/muchos.props
 
 	#az network vnet list --subscription 6187b663-b744-4d24-8226-7e66525baf8f --resource-group rbaAccumulo7-rg --query '[0].{Name:name}.Name'
