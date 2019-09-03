@@ -103,10 +103,15 @@ echo "Update muchos.props" | tee --append setup-cluster.log
 vnet=$(az network vnet list --subscription $subscriptionId --resource-group $resourceGroup --query '[0].{Name:name}.Name' | cut -d \" -f2)
 sed -i "/^vnet =/c\vnet = $vnet" ~/fluo-muchos/conf/muchos.props
 
+vnetCidr=$(az network vnet list --subscription $subscriptionId --resource-group $resourceGroup --query '[0].{AddressSpace:addressSpace.addressPrefixes[0]}.AddressSpace' | cut -d \" -f2)
+sed -i "/^vnet_cidr =/c\vnet_cidr = $vnetCidr" ~/fluo-muchos/conf/muchos.props
+
 	#az network vnet list --subscription 6187b663-b744-4d24-8226-7e66525baf8f --resource-group rbaAccumulo7-rg --query '[0].{Name:name}.Name'
 	#vnet="$(az network vnet list --subscription 6187b663-b744-4d24-8226-7e66525baf8f --resource-group rbaAccumulo7-rg --query '[0].{Name:name}.Name')"
-
 	#vnet=$(az network vnet list --subscription 6187b663-b744-4d24-8226-7e66525baf8f --resource-group rbaAccumulo7-rg --query '[0].{Name:name}.Name' | cut -d \" -f2)
+	
+	#az network vnet list --subscription 6187b663-b744-4d24-8226-7e66525baf8f --resource-group rbaAccumulo7-rg --query '[0].{AddressSpace:addressSpace.addressPrefixes[0]}.AddressSpace'
+	#vnetAddressSpace=$(az network vnet list --subscription 6187b663-b744-4d24-8226-7e66525baf8f --resource-group rbaAccumulo7-rg --query '[0].{AddressSpace:addressSpace.addressPrefixes[0]}.AddressSpace' | cut -d \" -f2)
 	
 	#[
 	#  {
