@@ -27,7 +27,6 @@ while true ; do
         *) echoerr "ERROR: Unable to get variables from arguments" ; exit 1 ;;
     esac
 done
-echo "resourceGroup: "$resourceGroup | tee --append setup-cluster.log
 if [ -z "$appId" ]
 then
     echoerr "Missing required argument: -a | app-id" | tee --append setup-cluster.log
@@ -46,6 +45,11 @@ fi
 if [ -z "$subscriptionId" ]
 then
     echoerr "Missing required argument: -s | subscription-id" | tee --append setup-cluster.log
+    exit 1
+fi
+if [ -z "$resourceGroup" ]
+then
+    echoerr "Missing required argument: -g | resource-group" | tee --append setup-cluster.log
     exit 1
 fi
 
@@ -95,6 +99,7 @@ echo "Update muchos.props" | tee --append setup-cluster.log
 #sed -i '/^nameservice_id =/c\nameservice_id = rbaaccucluster' ~/fluo-muchos/conf/muchos.props
 #sed -i '/^profile=/c\profile=perf-small' ~/fluo-muchos/conf/muchos.props
 
+sed -i "/^resource_group =/c\resource_group = $resourceGroup" ~/fluo-muchos/conf/muchos.props
 
 
 #			resource_group = <your resource group name>
