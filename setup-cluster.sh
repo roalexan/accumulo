@@ -85,7 +85,7 @@ sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
 sudo sh -c 'echo -e "[azure-cli]\nname=Azure CLI\nbaseurl=https://packages.microsoft.com/yumrepos/azure-cli\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/azure-cli.repo'
 sudo yum install -y azure-cli
 sed -i '/^PYTHONPATH=/c\PYTHONPATH=/usr/lib64/az/lib/python2.7/site-packages python2 -sm azure.cli "$@"' $(which az)
-az login --service-principal --username "$APP_ID" --password "$PASSWORD" --tenant "$TENANT_ID"
+az login --service-principal --username "$appId" --password "$password" --tenant "$tenantId"
 az account set --subscription "$subscriptionId"
 
 echo "Update muchos.props"
