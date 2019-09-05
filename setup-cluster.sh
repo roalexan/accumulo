@@ -1,5 +1,6 @@
 #!/bin/bash
 cd ~
+rm --force ./setup-cluster.log
 exec > >(tee --append ./setup-cluster.log)
 exec 2>&1
 
