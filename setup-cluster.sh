@@ -127,7 +127,7 @@ chmod +x ./muchos
 ./muchos launch --cluster $nameservice_id
 
 sed -i "s/zkfc/zkfc,spark/" ~/fluo-muchos/conf/muchos.props
-chmod +x ./ansible/scripts/install_ansible.sh
+chmod +x ~/fluo-muchos/ansible/scripts/install_ansible.sh
 ./muchos setup --cluster $nameservice_id
 
 	#az network vnet list --subscription 6187b663-b744-4d24-8226-7e66525baf8f --resource-group rbaAccumulo7-rg --query '[0].{Name:name}.Name'
