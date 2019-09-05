@@ -125,6 +125,9 @@ cd ~/fluo-muchos/bin
 chmod +x ./muchos
 ./muchos launch --cluster $nameservice_id
 
+sed -i "s/zkfc/zkfc,spark/" ~/fluo-muchos/conf/muchos.props
+./muchos setup --cluster $nameservice_id
+
 	#az network vnet list --subscription 6187b663-b744-4d24-8226-7e66525baf8f --resource-group rbaAccumulo7-rg --query '[0].{Name:name}.Name'
 	#vnet="$(az network vnet list --subscription 6187b663-b744-4d24-8226-7e66525baf8f --resource-group rbaAccumulo7-rg --query '[0].{Name:name}.Name')"
 	#vnet=$(az network vnet list --subscription 6187b663-b744-4d24-8226-7e66525baf8f --resource-group rbaAccumulo7-rg --query '[0].{Name:name}.Name' | cut -d \" -f2)
