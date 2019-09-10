@@ -6,7 +6,7 @@ exec 2>&1
 
 date
 echo "Read the options"
-TEMP=`getopt -o a:p:t:s:g --long app-id:,password:,tenant-id:,subscription-id:,resource-group: -- "$@"`
+TEMP=`getopt -o a:p:t:s:g:n:v:d:b:l --long app-id:,password:,tenant-id:,subscription-id:,resource-group:,num-nodes:,vm-sku:,num-disks:,disk-size-gb:,location: -- "$@"`
 eval set -- "$TEMP"
 
 echo "Extract options and their arguments into variables"
@@ -22,6 +22,16 @@ while true ; do
             subscriptionId=$2 ; shift 2;;
         -g|--resource-group)
             resourceGroup=$2 ; shift 2;;
+        -n|--num-nodes)
+            numNodes=$2 ; shift 2;;
+        -v|--vm-sku)
+            vmSku=$2 ; shift 2;;
+        -d|--num-disks)
+            numDisks=$2 ; shift 2;;
+        -b|--disk-size-gb)
+            diskSizeGb=$2 ; shift 2;;
+        -l|--location)
+            location=$2 ; shift 2;;
         --) shift ; break ;;
         *) echo "ERROR: Unable to get variables from arguments" ; exit 1 ;;
     esac
@@ -49,6 +59,31 @@ fi
 if [ -z "$resourceGroup" ]
 then
     echo "Missing required argument: -g | resource-group"
+    exit 1
+fi
+if [ -z "$numNodes" ]
+then
+    echo "Missing required argument: -n | num-nodes"
+    exit 1
+fi
+if [ -z "$vmSku" ]
+then
+    echo "Missing required argument: -v | vm-sku"
+    exit 1
+fi
+if [ -z "$numDisks" ]
+then
+    echo "Missing required argument: -d | num-disks"
+    exit 1
+fi
+if [ -z "$diskSizeGb" ]
+then
+    echo "Missing required argument: -b | disk-size-gb"
+    exit 1
+fi
+if [ -z "$location" ]
+then
+    echo "Missing required argument: -l | location"
     exit 1
 fi
 
@@ -94,9 +129,6 @@ vnet=$(az network vnet list --subscription $subscriptionId --resource-group $res
 vnetCidr=$(az network vnet list --subscription $subscriptionId --resource-group $resourceGroup --query '[0].addressSpace.addressPrefixes[0]' | cut -d \" -f2)
 subnet=$(az network vnet list --subscription $subscriptionId --resource-group $resourceGroup --query '[0].subnets[0].name' | cut -d \" -f2)
 subnetCidr=$(az network vnet list --subscription $subscriptionId --resource-group $resourceGroup --query '[0].subnets[0].addressPrefix' | cut -d \" -f2)
-numnodes="8"
-vm_sku="Standard_D8s_v3"
-location="eastus"
 /bin/cp ~/fluo-muchos/conf/muchos.props.example ~/fluo-muchos/conf/muchos.props
 sed -i "/^cluster_type =/c\cluster_type = azure" ~/fluo-muchos/conf/muchos.props
 sed -i "/^cluster_user =/c\cluster_user = rba1" ~/fluo-muchos/conf/muchos.props
@@ -110,9 +142,11 @@ sed -i "/^vnet =/c\vnet = $vnet" ~/fluo-muchos/conf/muchos.props
 sed -i "/^vnet_cidr =/c\vnet_cidr = $vnetCidr" ~/fluo-muchos/conf/muchos.props
 sed -i "/^subnet =/c\subnet = $subnet" ~/fluo-muchos/conf/muchos.props
 sed -i "/^subnet_cidr =/c\subnet_cidr = $subnetCidr" ~/fluo-muchos/conf/muchos.props
-sed -i "/^numnodes =/c\numnodes = $numnodes" ~/fluo-muchos/conf/muchos.props
-sed -i "/^vm_sku =/c\vm_sku = $vm_sku" ~/fluo-muchos/conf/muchos.props
+sed -i "/^numnodes =/c\numnodes = $numNodes" ~/fluo-muchos/conf/muchos.props
+sed -i "/^vm_sku =/c\vm_sku = $vmSku" ~/fluo-muchos/conf/muchos.props
 sed -i "/^location =/c\location = $location" ~/fluo-muchos/conf/muchos.props
+sed -i "/^numdisks =/c\numdisks = $numDisks" ~/fluo-muchos/conf/muchos.props
+sed -i "/^disk_size_gb =/c\disk_size_gb = $diskSizeGb" ~/fluo-muchos/conf/muchos.props
 
 echo "Run launch script"
 cd ~/fluo-muchos/bin
