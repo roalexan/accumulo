@@ -111,24 +111,15 @@ git clone https://github.com/ansible/ansible
 cp ansible/lib/ansible/modules/cloud/azure/azure_rm_virtualmachinescaleset.py env/lib/python3.6/site-packages/ansible/modules/cloud/azure/
 
 echo "Download the Magna Carta repo zip"
-ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -q -N ""
 mkdir ~/fluo-muchos
 wget https://roalexan.blob.core.windows.net/accumulo/fluo-muchos.zip --output-document ~/fluo-muchos/fluo-muchos.zip
 unzip ~/fluo-muchos/fluo-muchos.zip -d ~/fluo-muchos
-
-echo "Setup agent forwarding"
-export ANSIBLE_HOST_KEY_CHECKING=False
-export ANSIBLE_LOG_PATH=~/play.log
-eval $(ssh-agent -s)
-ssh-add ~/.ssh/id_rsa
 
 echo "Install Azure CLI"
 sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
 sudo sh -c 'echo -e "[azure-cli]\nname=Azure CLI\nbaseurl=https://packages.microsoft.com/yumrepos/azure-cli\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/azure-cli.repo'
 sudo yum install -y azure-cli
 sed -i '/^PYTHONPATH=/c\PYTHONPATH=/usr/lib64/az/lib/python2.7/site-packages python2 -sm azure.cli "$@"' $(which az)
-az login --service-principal --username "$appId" --password "$password" --tenant "$tenantId"
-az account set --subscription "$subscriptionId"
 
 echo "Update muchos.props"
 nameservice_id=rbaaccucluster
@@ -150,13 +141,3 @@ sed -i "/^vm_sku =/c\vm_sku = $vmSku" ~/fluo-muchos/conf/muchos.props
 sed -i "/^location =/c\location = $location" ~/fluo-muchos/conf/muchos.props
 sed -i "/^numdisks =/c\numdisks = $numDisks" ~/fluo-muchos/conf/muchos.props
 sed -i "/^disk_size_gb =/c\disk_size_gb = $diskSizeGb" ~/fluo-muchos/conf/muchos.props
-
-echo "Run launch script"
-cd ~/fluo-muchos/bin
-chmod +x ./muchos
-./muchos launch --cluster $nameservice_id
-
-echo "Run setup script"
-sed -i "s/zkfc/zkfc,spark/" ~/fluo-muchos/conf/muchos.props
-chmod +x ~/fluo-muchos/ansible/scripts/install_ansible.sh
-./muchos setup --cluster $nameservice_id
