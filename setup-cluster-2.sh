@@ -115,6 +115,8 @@ ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -q -N ""
 mkdir ~/fluo-muchos
 wget https://roalexan.blob.core.windows.net/accumulo/fluo-muchos.zip --output-document ~/fluo-muchos/fluo-muchos.zip
 unzip ~/fluo-muchos/fluo-muchos.zip -d ~/fluo-muchos
+chmod +x ./muchos
+chmod +x ~/fluo-muchos/ansible/scripts/install_ansible.sh
 
 echo "Install Azure CLI"
 sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
