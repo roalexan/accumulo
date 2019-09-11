@@ -111,6 +111,7 @@ git clone https://github.com/ansible/ansible
 cp ansible/lib/ansible/modules/cloud/azure/azure_rm_virtualmachinescaleset.py env/lib/python3.6/site-packages/ansible/modules/cloud/azure/
 
 echo "Download the Magna Carta repo zip"
+ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -q -N ""
 mkdir ~/fluo-muchos
 wget https://roalexan.blob.core.windows.net/accumulo/fluo-muchos.zip --output-document ~/fluo-muchos/fluo-muchos.zip
 unzip ~/fluo-muchos/fluo-muchos.zip -d ~/fluo-muchos
