@@ -6,18 +6,12 @@ exec 2>&1
 
 date
 echo "Read the options"
-TEMP=`getopt -o a:p:t:s:g:n:v:d:b:l --long app-id:,password:,tenant-id:,subscription-id:,resource-group:,num-nodes:,vm-sku:,num-disks:,disk-size-gb:,location: -- "$@"`
+TEMP=`getopt -o s:g:n:v:d:b:l:w:x:y:z --long subscription-id:,resource-group:,num-nodes:,vm-sku:,num-disks:,disk-size-gb:,location:,vnet:,vnet-cidr:,subnet:,subnet-cidr: -- "$@"`
 eval set -- "$TEMP"
 
 echo "Extract options and their arguments into variables"
 while true ; do
     case "$1" in
-        -a|--app-id)
-            appId=$2 ; shift 2 ;;
-        -p|--password)
-            password=$2 ; shift 2;;
-        -t|--tenant-id)
-            tenantId=$2 ; shift 2;;
         -s|--subscription-id)
             subscriptionId=$2 ; shift 2;;
         -g|--resource-group)
@@ -31,26 +25,19 @@ while true ; do
         -b|--disk-size-gb)
             diskSizeGb=$2 ; shift 2;;
         -l|--location)
-            location=$2 ; shift 2;;
+            location=$2 ; shift 2;;            
+        -w|--vnet)
+            vnet=$2 ; shift 2;;
+        -x|--vnet-cidr)
+            vnetCidr=$2 ; shift 2;;
+        -y|--subnet)
+            subnet=$2 ; shift 2;;
+        -z|--subnet-cidr)
+            subnetCidr=$2 ; shift 2;;
         --) shift ; break ;;
         *) echo "ERROR: Unable to get variables from arguments" ; exit 1 ;;
     esac
 done
-if [ -z "$appId" ]
-then
-    echo "Missing required argument: -a | app-id"
-    exit 1
-fi
-if [ -z "$password" ]
-then
-    echo "Missing required argument: -p | password"
-    exit 1
-fi
-if [ -z "$tenantId" ]
-then
-    echo "Missing required argument: -t | tenant-id"
-    exit 1
-fi
 if [ -z "$subscriptionId" ]
 then
     echo "Missing required argument: -s | subscription-id"
@@ -84,6 +71,26 @@ fi
 if [ -z "$location" ]
 then
     echo "Missing required argument: -l | location"
+    exit 1
+fi
+if [ -z "$vnet" ]
+then
+    echo "Missing required argument: -w | vnet"
+    exit 1
+fi
+if [ -z "$vnetCidr" ]
+then
+    echo "Missing required argument: -x | vnet-cidr"
+    exit 1
+fi
+if [ -z "$subnet" ]
+then
+    echo "Missing required argument: -y | subnet"
+    exit 1
+fi
+if [ -z "$subnetCidr" ]
+then
+    echo "Missing required argument: -z | subnet-cidr"
     exit 1
 fi
 
@@ -125,10 +132,6 @@ az account set --subscription "$subscriptionId"
 
 echo "Update muchos.props"
 nameservice_id=rbaaccucluster
-vnet=$(az network vnet list --subscription $subscriptionId --resource-group $resourceGroup --query '[0].name' | cut -d \" -f2)
-vnetCidr=$(az network vnet list --subscription $subscriptionId --resource-group $resourceGroup --query '[0].addressSpace.addressPrefixes[0]' | cut -d \" -f2)
-subnet=$(az network vnet list --subscription $subscriptionId --resource-group $resourceGroup --query '[0].subnets[0].name' | cut -d \" -f2)
-subnetCidr=$(az network vnet list --subscription $subscriptionId --resource-group $resourceGroup --query '[0].subnets[0].addressPrefix' | cut -d \" -f2)
 /bin/cp ~/fluo-muchos/conf/muchos.props.example ~/fluo-muchos/conf/muchos.props
 sed -i "/^cluster_type =/c\cluster_type = azure" ~/fluo-muchos/conf/muchos.props
 sed -i "/^cluster_user =/c\cluster_user = rba1" ~/fluo-muchos/conf/muchos.props
