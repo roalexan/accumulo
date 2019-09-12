@@ -6,7 +6,7 @@ exec 2>&1
 
 date
 echo "Read the options"
-TEMP=`getopt -o s:g:n:v:d:b:l:w:x:y:z --long subscription-id:,resource-group:,num-nodes:,vm-sku:,num-disks:,disk-size-gb:,location:,vnet:,vnet-cidr:,subnet:,subnet-cidr: -- "$@"`
+TEMP=`getopt -o s:g:n:v:d:b:l:w:x:y:z:p:i --long subscription-id:,resource-group:,num-nodes:,vm-sku:,num-disks:,disk-size-gb:,location:,vnet:,vnet-cidr:,subnet:,subnet-cidr:,profile:,nameservice-id: -- "$@"`
 eval set -- "$TEMP"
 
 echo "Extract options and their arguments into variables"
@@ -34,6 +34,10 @@ while true ; do
             subnet=$2 ; shift 2;;
         -z|--subnet-cidr)
             subnetCidr=$2 ; shift 2;;
+        -p|--profile)
+            profile=$2 ; shift 2;;
+        -i|--nameservice-id)
+            nameserviceId=$2 ; shift 2;;
         --) shift ; break ;;
         *) echo "ERROR: Unable to get variables from arguments" ; exit 1 ;;
     esac
@@ -93,6 +97,16 @@ then
     echo "Missing required argument: -z | subnet-cidr"
     exit 1
 fi
+if [ -z "$profile" ]
+then
+    echo "Missing required argument: -p | profile"
+    exit 1
+fi
+if [ -z "$nameserviceId" ]
+then
+    echo "Missing required argument: -i | nameservice-id"
+    exit 1
+fi
 
 echo "Install Python 3.6 and create a virtual environment"
 sudo yum install -y epel-release
@@ -125,15 +139,12 @@ sudo yum install -y azure-cli
 sed -i '/^PYTHONPATH=/c\PYTHONPATH=/usr/lib64/az/lib/python2.7/site-packages python2 -sm azure.cli "$@"' $(which az)
 
 echo "Update muchos.props"
-nameservice_id=rbaaccucluster
 /bin/cp ~/fluo-muchos/conf/muchos.props.example ~/fluo-muchos/conf/muchos.props
 sed -i "/^cluster_type =/c\cluster_type = azure" ~/fluo-muchos/conf/muchos.props
 sed -i "/^cluster_user =/c\cluster_user = rba1" ~/fluo-muchos/conf/muchos.props
 sed -i "/^hadoop_version =/c\hadoop_version = 3.2.0" ~/fluo-muchos/conf/muchos.props
 sed -i "/^spark_version =/c\spark_version = 2.4.3" ~/fluo-muchos/conf/muchos.props
 sed -i "/^accumulo_version =/c\accumulo_version = 2.0.0" ~/fluo-muchos/conf/muchos.props
-sed -i "/^nameservice_id =/c\nameservice_id = $nameservice_id" ~/fluo-muchos/conf/muchos.props
-sed -i "/^profile=/c\profile=perf-small" ~/fluo-muchos/conf/muchos.props
 sed -i "/^resource_group =/c\resource_group = $resourceGroup" ~/fluo-muchos/conf/muchos.props
 sed -i "/^vnet =/c\vnet = $vnet" ~/fluo-muchos/conf/muchos.props
 sed -i "/^vnet_cidr =/c\vnet_cidr = $vnetCidr" ~/fluo-muchos/conf/muchos.props
@@ -144,3 +155,5 @@ sed -i "/^vm_sku =/c\vm_sku = $vmSku" ~/fluo-muchos/conf/muchos.props
 sed -i "/^location =/c\location = $location" ~/fluo-muchos/conf/muchos.props
 sed -i "/^numdisks =/c\numdisks = $numDisks" ~/fluo-muchos/conf/muchos.props
 sed -i "/^disk_size_gb =/c\disk_size_gb = $diskSizeGb" ~/fluo-muchos/conf/muchos.props
+sed -i "/^profile=/c\profile=$profile" ~/fluo-muchos/conf/muchos.props
+sed -i "/^nameservice_id =/c\nameservice_id = $nameserviceId" ~/fluo-muchos/conf/muchos.props
