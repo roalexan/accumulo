@@ -11,7 +11,7 @@ exec 2>&1
 
 date
 echo "Read the options"
-TEMP=`getopt -o u:i --long --admin-username:,nameservice-id: -- "$@"`
+TEMP=`getopt -o u:i --long admin-username:,nameservice-id: -- "$@"`
 eval set -- "$TEMP"
 
 echo "Extract options and their arguments into variables"
