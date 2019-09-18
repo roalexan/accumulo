@@ -54,5 +54,11 @@ do
 		elem=$(echo $elem | sed 's/\//\\\//g')
 		sed -i "${lineIndex}a\\\t${elem}" ~/install/hadoop-3.2.0/etc/hadoop/yarn-site.xml
 	fi
+	if ! grep -q spark.yarn.am.cores ~/install/spark-2.4.3-bin-without-hadoop/conf/spark-defaults.conf; then
+		echo "spark.yarn.am.cores                4" >> ~/install/spark-2.4.3-bin-without-hadoop/conf/spark-defaults.conf 
+	fi
+	if ! grep -q spark.yarn.am.memory ~/install/spark-2.4.3-bin-without-hadoop/conf/spark-defaults.conf; then
+		echo "spark.yarn.am.memory               12g" >> ~/install/spark-2.4.3-bin-without-hadoop/conf/spark-defaults.conf 
+	fi
 EOF
 done < ~/fluo-muchos/conf/hosts/$nameserviceId
