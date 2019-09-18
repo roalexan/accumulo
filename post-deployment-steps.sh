@@ -46,6 +46,7 @@ do
 	ssh -n -o "StrictHostKeyChecking no" $adminUsername@$hostname "sed -i '/yarn.nodemanager.resource.memory-mb/{n; s/<value>.*<\/value>/<value>32768<\/value>/}' ~/install/hadoop-3.2.0/etc/hadoop/yarn-site.xml"
 	
 	echo "set yarn.scheduler.maximum-allocation-mb in "$hostname
+	ssh -T -o "StrictHostKeyChecking no" $adminUsername@$hostname << 'EOF'
 	# https://unix.stackexchange.com/questions/190369/find-out-on-which-line-in-text-file-is-matching-word
 	lineIndex=`sed -n '/yarn.nodemanager.resource.memory-mb/=' ~/install/hadoop-3.2.0/etc/hadoop/yarn-site.xml`
 	lineIndex=$(($lineIndex + 2))
@@ -53,4 +54,5 @@ do
 	elem=$(echo $elem | sed 's/\//\\\//g')
 	#https://stackoverflow.com/questions/5190966/using-sed-to-insert-tabs
 	sed -i "${lineIndex}a\\\t${elem}" ~/install/hadoop-3.2.0/etc/hadoop/yarn-site.xml
+	EOF
 done < ~/fluo-muchos/conf/hosts/$nameserviceId
