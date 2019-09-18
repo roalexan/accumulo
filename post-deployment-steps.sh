@@ -46,13 +46,13 @@ do
 	ssh -n -o "StrictHostKeyChecking no" $adminUsername@$hostname "sed -i '/yarn.nodemanager.resource.memory-mb/{n; s/<value>.*<\/value>/<value>32768<\/value>/}' ~/install/hadoop-3.2.0/etc/hadoop/yarn-site.xml"
 	
 	echo "set yarn.scheduler.maximum-allocation-mb in "$hostname
+	ssh -T -o "StrictHostKeyChecking no" $adminUsername@$hostname << 'EOF'
 	if ! grep -q yarn.scheduler.maximum-allocation-mb ~/install/hadoop-3.2.0/etc/hadoop/yarn-site.xml; then
-		ssh -T -o "StrictHostKeyChecking no" $adminUsername@$hostname << 'EOF'
 		lineIndex=`sed -n '/yarn.nodemanager.resource.memory-mb/=' ~/install/hadoop-3.2.0/etc/hadoop/yarn-site.xml`
 		lineIndex=$(($lineIndex + 2))
 		elem="<property>\n\t\t<name>yarn.scheduler.maximum-allocation-mb</name>\n\t\t<value>32768</value>\n\t</property>"
 		elem=$(echo $elem | sed 's/\//\\\//g')
 		sed -i "${lineIndex}a\\\t${elem}" ~/install/hadoop-3.2.0/etc/hadoop/yarn-site.xml
-EOF
 	fi
+EOF
 done < ~/fluo-muchos/conf/hosts/$nameserviceId
