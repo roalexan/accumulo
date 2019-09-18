@@ -44,4 +44,13 @@ do
 	# https://stackoverflow.com/questions/6351022/executing-ssh-command-in-a-bash-shell-script-within-a-loop
 	# https://superuser.com/questions/125324/how-can-i-avoid-sshs-host-verification-for-known-hosts
 	ssh -n -o "StrictHostKeyChecking no" $adminUsername@$hostname "sed -i '/yarn.nodemanager.resource.memory-mb/{n; s/<value>.*<\/value>/<value>32768<\/value>/}' ~/install/hadoop-3.2.0/etc/hadoop/yarn-site.xml"
+	
+	echo "set yarn.scheduler.maximum-allocation-mb in "$hostname
+	# https://unix.stackexchange.com/questions/190369/find-out-on-which-line-in-text-file-is-matching-word
+	lineIndex=`sed -n '/yarn.nodemanager.resource.memory-mb/=' ~/install/hadoop-3.2.0/etc/hadoop/yarn-site.xml`
+	lineIndex=$(($lineIndex + 2))
+	elem="<property>\n\t\t<name>yarn.scheduler.maximum-allocation-mb</name>\n\t\t<value>32768</value>\n\t</property>"
+	elem=$(echo $elem | sed 's/\//\\\//g')
+	#https://stackoverflow.com/questions/5190966/using-sed-to-insert-tabs
+	sed -i "${lineIndex}a\\\t${elem}" ~/install/hadoop-3.2.0/etc/hadoop/yarn-site.xml
 done < ~/fluo-muchos/conf/hosts/$nameserviceId
