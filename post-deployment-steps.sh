@@ -52,5 +52,5 @@ do
 	elem="<property>\n\t\t<name>yarn.scheduler.maximum-allocation-mb</name>\n\t\t<value>32768</value>\n\t</property>"
 	elem=$(echo $elem | sed 's/\//\\\//g')
 	sed -i "${lineIndex}a\\\t${elem}" ~/install/hadoop-3.2.0/etc/hadoop/yarn-site.xml
-	EOF
+EOF
 done < ~/fluo-muchos/conf/hosts/$nameserviceId
