@@ -67,8 +67,8 @@ ssh-add ~/.ssh/id_rsa
 
 echo "Run launch script"
 cd ~/fluo-muchos/bin
-./muchos launch --cluster $nameserviceId
+./muchos launch --cluster $nameserviceid
 		
 echo "Run setup script"
 sed -i "s/zkfc/zkfc,spark/" ~/fluo-muchos/conf/muchos.props
-./muchos setup --cluster $nameserviceId
+./muchos setup --cluster $nameserviceid
