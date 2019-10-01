@@ -107,7 +107,7 @@ echo "Activate conda environment"
 conda activate accumulo
 
 echo "Create jupyter kernel"
-JAR="file:////home/${adminUsername}/webscale-ai-test/target/accumulo-spark-shaded.jar"
+JAR="file:////home/$adminUsername/webscale-ai-test/target/accumulo-spark-shaded.jar"
 echo "JAR: ${JAR}"
 jupyter toree install \
     --replace \
