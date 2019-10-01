@@ -70,8 +70,6 @@ echo "Log into master node"
 read hostname ipaddress < ~/fluo-muchos/conf/hosts/$nameserviceId
 ssh -T -o "StrictHostKeyChecking no" $adminUsername@$hostname << 'EOF'
 
-echo "adminUsername: ${adminUsername}"
-
 echo "Restart accumulo to apply changes"
 cd ~/install/accumulo-2.0.0/bin
 ./accumulo-cluster restart
@@ -110,7 +108,7 @@ echo "Activate conda environment"
 conda activate accumulo
 
 echo "Create jupyter kernel"
-echo "adminUsername: ${adminUsername}"
+adminUsername=$(whoami)
 JAR="file:////home/${adminUsername}/webscale-ai-test/target/accumulo-spark-shaded.jar"
 echo "JAR: ${JAR}"
 jupyter toree install \
