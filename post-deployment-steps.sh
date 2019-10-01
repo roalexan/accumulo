@@ -82,23 +82,33 @@ wget https://roalexan.blob.core.windows.net/webscale-ai/accumulo_scala.yaml
 wget https://roalexan.blob.core.windows.net/webscale-ai/pom.xml
 mvn clean package -P create-shade-jar
 
-echo "Install conda"
-cd /tmp
-curl -O https://repo.anaconda.com/archive/Anaconda3-5.3.1-Linux-x86_64.sh
-bash Anaconda3-5.3.1-Linux-x86_64.sh -b
+#echo "Install conda"
+#cd /tmp
+#curl -O https://repo.anaconda.com/archive/Anaconda3-5.3.1-Linux-x86_64.sh
+#bash Anaconda3-5.3.1-Linux-x86_64.sh -b
+
+echo "Install Anaconda"
+ANACONDA="https://repo.continuum.io/miniconda/Miniconda3-4.6.14-Linux-x86_64.sh"
+curl ${ANACONDA} -o anaconda.sh
+/bin/bash anaconda.sh -b -p conda
+rm anaconda.sh
+echo ". ${HOME}/conda/etc/profile.d/conda.sh" >> ~/.bashrc
+echo "conda activate base" >> ~/.bashrc
+PATH="${HOME}/conda/bin:${PATH}"
+source ~/.bashrc
 
 echo "Install krb5-devel"
 sudo yum install -y krb5-devel
 
 echo "Create conda environment
 cd ~/webscale-ai-test
-~/anaconda/bin/conda env create -f accumulo_scala.yaml
+conda env create -f accumulo_scala.yaml
 
 echo "Activate conda environment"
-~/anaconda/bin/conda activate accumulo
+conda activate accumulo
 
 echo "Create jupyter kernel"
-JAR="file:////home/$adminUsername/webscale-ai-test/target/accumulo-spark-shaded.jar"
+JAR="file:////home/${adminUsername}/webscale-ai-test/target/accumulo-spark-shaded.jar"
 jupyter toree install \
     --replace \
     --user \
