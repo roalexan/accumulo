@@ -37,6 +37,7 @@ then
     exit 1
 fi
 
+echo "Update yarn configs for all nodes"
 # https://stackoverflow.com/questions/7619438/bash-read-a-file-line-by-line-and-process-each-segment-as-parameters-to-other-p#7619467
 while read hostname ipaddress
 do
@@ -64,3 +65,49 @@ do
 	fi
 EOF
 done < ~/fluo-muchos/conf/hosts/$nameserviceId
+
+echo "Log into master node"
+read hostname ipaddress < ~/fluo-muchos/conf/hosts/$nameserviceId
+ssh -T -o "StrictHostKeyChecking no" $adminUsername@$hostname
+
+echo "Restart accumulo to apply changes"
+cd ~/install/accumulo-2.0.0/bin
+./accumulo-cluster restart
+
+echo "Build accumulo jar"
+cd ~
+mkdir webscale-ai-test
+cd webscale-ai-test
+wget https://roalexan.blob.core.windows.net/webscale-ai/accumulo_scala.yaml
+wget https://roalexan.blob.core.windows.net/webscale-ai/pom.xml
+mvn clean package -P create-shade-jar
+
+echo "Install conda"
+cd /tmp
+curl -O https://repo.anaconda.com/archive/Anaconda3-5.3.1-Linux-x86_64.sh
+bash Anaconda3-5.3.1-Linux-x86_64.sh -b
+
+echo "Install krb5-devel"
+sudo yum install -y krb5-devel
+
+echo "Create conda environment
+cd ~/webscale-ai-test
+~/anaconda/bin/conda env create -f accumulo_scala.yaml
+
+echo "Activate conda environment"
+~/anaconda/bin/conda activate accumulo
+
+echo "Create jupyter kernel"
+JAR="file:////home/$adminUsername/webscale-ai-test/target/accumulo-spark-shaded.jar"
+jupyter toree install \
+    --replace \
+    --user \
+    --kernel_name=accumulo \
+    --spark_home=${SPARK_HOME} \
+    --spark_opts="--master yarn --jars $JAR \
+        --packages com.microsoft.ml.spark:mmlspark_2.11:0.18.1 \
+        --driver-memory 16g \
+        --executor-memory 12g \
+        --driver-cores 4 \
+        --executor-cores 4 \
+        --num-executors 64"
