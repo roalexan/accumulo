@@ -99,7 +99,7 @@ source ~/.bashrc
 echo "Install krb5-devel"
 sudo yum install -y krb5-devel
 
-echo "Create conda environment
+echo "Create conda environment"
 cd ~/webscale-ai-test
 conda env create -f accumulo_scala.yaml
 
