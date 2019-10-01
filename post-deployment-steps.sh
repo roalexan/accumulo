@@ -68,7 +68,7 @@ done < ~/fluo-muchos/conf/hosts/$nameserviceId
 
 echo "Log into master node"
 read hostname ipaddress < ~/fluo-muchos/conf/hosts/$nameserviceId
-ssh -T -o "StrictHostKeyChecking no" $adminUsername@$hostname
+ssh -T -o "StrictHostKeyChecking no" $adminUsername@$hostname << 'EOF'
 
 echo "Restart accumulo to apply changes"
 cd ~/install/accumulo-2.0.0/bin
@@ -111,3 +111,4 @@ jupyter toree install \
         --driver-cores 4 \
         --executor-cores 4 \
         --num-executors 64"
+EOF
