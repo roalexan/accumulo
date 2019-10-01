@@ -69,6 +69,9 @@ done < ~/fluo-muchos/conf/hosts/$nameserviceId
 echo "Log into master node"
 read hostname ipaddress < ~/fluo-muchos/conf/hosts/$nameserviceId
 ssh -T -o "StrictHostKeyChecking no" $adminUsername@$hostname << 'EOF'
+
+echo "adminUsername: ${adminUsername}"
+
 echo "Restart accumulo to apply changes"
 cd ~/install/accumulo-2.0.0/bin
 ./accumulo-cluster restart
