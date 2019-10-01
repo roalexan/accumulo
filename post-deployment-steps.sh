@@ -69,7 +69,6 @@ done < ~/fluo-muchos/conf/hosts/$nameserviceId
 echo "Log into master node"
 read hostname ipaddress < ~/fluo-muchos/conf/hosts/$nameserviceId
 ssh -T -o "StrictHostKeyChecking no" $adminUsername@$hostname << 'EOF'
-
 echo "Restart accumulo to apply changes"
 cd ~/install/accumulo-2.0.0/bin
 ./accumulo-cluster restart
@@ -109,12 +108,13 @@ conda activate accumulo
 
 echo "Create jupyter kernel"
 JAR="file:////home/${adminUsername}/webscale-ai-test/target/accumulo-spark-shaded.jar"
+echo "JAR: ${JAR}"
 jupyter toree install \
     --replace \
     --user \
     --kernel_name=accumulo \
     --spark_home=${SPARK_HOME} \
-    --spark_opts="--master yarn --jars $JAR \
+    --spark_opts="--master yarn --jars ${JAR} \
         --packages com.microsoft.ml.spark:mmlspark_2.11:0.18.1 \
         --driver-memory 16g \
         --executor-memory 12g \
