@@ -123,4 +123,13 @@ jupyter toree install \
         --driver-cores 4 \
         --executor-cores 4 \
         --num-executors 64"
+	
+wget https://roalexan.blob.core.windows.net/webscale-ai/sentiment140_prefix.csv
+hdfs dfs -mkdir -p /user/${adminUsername}
+hdfs dfs -put sentiment140_prefix.csv sentiment140_prefix.csv
+hdfs dfs -ls /user/${adminUsername}
+wget https://roalexan.blob.core.windows.net/webscale-ai/accumulo-client.properties
+wget https://roalexan.blob.core.windows.net/webscale-ai/baseline_colocated_spark_train.ipynb
+jupyter nbconvert --execute baseline_colocated_spark_train.ipynb
+
 EOF
