@@ -11,29 +11,63 @@ exec 2>&1
 
 date
 echo "Read the options"
-TEMP=`getopt -o u:i --long admin-username:,nameservice-id: -- "$@"`
+TEMP=`getopt -o a:p:t:s:g:n:u --long spappid:,sppassword:,sptenantid:,subscription:,resource-group:,nameserviceid:,admin-username: -- "$@"`
 eval set -- "$TEMP"
 
 echo "Extract options and their arguments into variables"
 while true ; do
     case "$1" in
+        -a|--spappid)
+            spappid=$2 ; shift 2;;
+        -p|--sppassword)
+            sppassword=$2 ; shift 2;;
+        -t|--sptenantid)
+            sptenantid=$2 ; shift 2;;
+        -s|--subscription)
+            subscription=$2 ; shift 2;;
+        -g|--resource-group)
+            resourcegroup=$2 ; shift 2;;
+        -n|--nameserviceid)
+            nameserviceid=$2 ; shift 2;;
         -u|--admin-username)
-            adminUsername=$2 ; shift 2;;
-        -i|--nameservice-id)
-            nameserviceId=$2 ; shift 2;;
+            adminusername=$2 ; shift 2;;
         --) shift ; break ;;
         *) echo "ERROR: Unable to get variables from arguments" ; exit 1 ;;
     esac
 done
-
-if [ -z "$adminUsername" ]
+if [ -z "$spappid" ]
 then
-    echo "Missing required argument: -u | admin-username"
+    echo "Missing required argument: -a | spappid"
     exit 1
 fi
-if [ -z "$nameserviceId" ]
+if [ -z "$sppassword" ]
 then
-    echo "Missing required argument: -i | nameservice-id"
+    echo "Missing required argument: -p | sppassword"
+    exit 1
+fi
+if [ -z "$sptenantid" ]
+then
+    echo "Missing required argument: -t | sptenantid"
+    exit 1
+fi
+if [ -z "$subscription" ]
+then
+    echo "Missing required argument: -s | subscription"
+    exit 1
+fi
+if [ -z "$resourcegroup" ]
+then
+    echo "Missing required argument: -g | resource-group"
+    exit 1
+fi
+if [ -z "$nameserviceid" ]
+then
+    echo "Missing required argument: -n | nameserviceid"
+    exit 1
+fi
+if [ -z "$adminusername" ]
+then
+    echo "Missing required argument: -u | admin-username"
     exit 1
 fi
 
@@ -43,8 +77,8 @@ while read hostname ipaddress
 do
 	# https://stackoverflow.com/questions/6351022/executing-ssh-command-in-a-bash-shell-script-within-a-loop
 	# https://superuser.com/questions/125324/how-can-i-avoid-sshs-host-verification-for-known-hosts
-	echo "set properties in "$hostname
-	ssh -T -o "StrictHostKeyChecking no" $adminUsername@$hostname << 'EOF'
+	echo "set properties in "${hostname}
+	ssh -T -o "StrictHostKeyChecking no" ${adminusername}@${hostname} << 'EOF'
 	echo "set yarn.nodemanager.resource.memory-mb"
 	sed -i '/yarn.nodemanager.resource.memory-mb/{n; s/<value>.*<\/value>/<value>32768<\/value>/}' ~/install/hadoop-3.2.0/etc/hadoop/yarn-site.xml
 	echo "set yarn.scheduler.maximum-allocation-mb"
@@ -64,19 +98,52 @@ do
 		echo "spark.yarn.am.memory               12g" >> ~/install/spark-2.4.3-bin-without-hadoop/conf/spark-defaults.conf 
 	fi
 EOF
-done < ~/fluo-muchos/conf/hosts/$nameserviceId
+done < ~/fluo-muchos/conf/hosts/${nameserviceid}
+
+echo "login Azure CLI using service principal"
+az login --service-principal --username ${spappid} --password ${sppassword} --tenant ${sptenantid}
+
+echo "set subscription"
+az account set --subscription ${subscription}
+
+echo "set default resource group"
+az configure --defaults group=${resourcegroup}
+
+echo "Restart scale set"
+az vmss restart --resource-group ${resourcegroup} --name ${nameserviceid}
+
+echo "start zookeepers"
+counter=1
+while read hostname ipaddress
+do
+        echo "start zookeeper - hostname: ${hostname}, ipaddress: ${ipaddress}"
+	ssh -o "StrictHostKeyChecking no" ${adminusername}@${hostname} "~/install/zookeeper-3.4.14/bin/zkServer.sh start"
+        ((counter++))
+        if [ $counter -gt 3 ]
+        then
+                break
+        fi
+done < ~/fluo-muchos/conf/hosts/${nameserviceid}
+
+read hostname ipaddress < ~/fluo-muchos/conf/hosts/${nameserviceid}
+echo "hostname: ${hostname}, ipaddress: ${ipaddress}"
+
+echo "start dfs"
+ssh -o "StrictHostKeyChecking no" ${adminusername}@${hostname} "~/install/hadoop-3.2.0/sbin/start-dfs.sh"
+
+echo "start yarn"
+ssh -o "StrictHostKeyChecking no" ${adminusername}@${hostname} "~/install/hadoop-3.2.0/sbin/start-yarn.sh"
+
+echo "start accumulo"
+ssh -o "StrictHostKeyChecking no" ${adminusername}@${hostname} "~/install/accumulo-2.0.0/bin/accumulo-cluster start"
 
 echo "Log into master node"
-read hostname ipaddress < ~/fluo-muchos/conf/hosts/$nameserviceId
-ssh -T -o "StrictHostKeyChecking no" $adminUsername@$hostname << 'EOF'
-
-echo "Restart accumulo to apply changes"
-cd ~/install/accumulo-2.0.0/bin
-./accumulo-cluster restart
+ssh -T -o "StrictHostKeyChecking no" ${adminusername}@${hostname} << 'EOF'
 
 echo "Build accumulo jar"
+BUILD-DIR="webscale-ai-test"
 cd ~
-mkdir webscale-ai-test
+mkdir ${BUILD-DIR}
 cd webscale-ai-test
 wget https://roalexan.blob.core.windows.net/webscale-ai/accumulo_scala.yaml
 wget https://roalexan.blob.core.windows.net/webscale-ai/pom.xml
@@ -101,7 +168,7 @@ echo "Install krb5-devel"
 sudo yum install -y krb5-devel
 
 echo "Create conda environment"
-cd ~/webscale-ai-test
+cd ~/{BUILD-DIR}
 conda env create -f accumulo_scala.yaml
 
 echo "Activate conda environment"
@@ -124,9 +191,10 @@ jupyter toree install \
         --executor-cores 4 \
         --num-executors 64"
 	
-wget https://roalexan.blob.core.windows.net/webscale-ai/sentiment140_prefix.csv
+DATA-FILE="sentiment140_prefix.csv"
+wget https://roalexan.blob.core.windows.net/webscale-ai/${DATA-FILE}
 hdfs dfs -mkdir -p /user/${adminUsername}
-hdfs dfs -put sentiment140_prefix.csv sentiment140_prefix.csv
+hdfs dfs -put ${DATA-FILE} ${DATA-FILE}
 hdfs dfs -ls /user/${adminUsername}
 wget https://roalexan.blob.core.windows.net/webscale-ai/accumulo-client.properties
 wget https://roalexan.blob.core.windows.net/webscale-ai/baseline_colocated_spark_train.ipynb
