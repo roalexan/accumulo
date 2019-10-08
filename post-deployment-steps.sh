@@ -144,7 +144,7 @@ echo "Build accumulo jar"
 BUILD-DIR="webscale-ai-test"
 cd ~
 mkdir ${BUILD-DIR}
-cd webscale-ai-test
+cd ${BUILD-DIR}
 wget https://roalexan.blob.core.windows.net/webscale-ai/accumulo_scala.yaml
 wget https://roalexan.blob.core.windows.net/webscale-ai/pom.xml
 mvn clean package -P create-shade-jar
