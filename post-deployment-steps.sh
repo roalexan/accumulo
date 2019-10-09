@@ -152,7 +152,7 @@ mvn clean package -P create-shade-jar
 echo "Install Anaconda"
 ANACONDA="https://repo.continuum.io/miniconda/Miniconda3-4.6.14-Linux-x86_64.sh"
 curl ${ANACONDA} -o anaconda.sh
-/bin/bash anaconda.sh -b -p conda
+/bin/bash anaconda.sh -b -p ${HOME}/conda
 rm anaconda.sh
 echo ". ${HOME}/conda/etc/profile.d/conda.sh" >> ~/.bashrc
 echo "conda activate base" >> ~/.bashrc
