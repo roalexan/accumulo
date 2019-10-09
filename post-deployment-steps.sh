@@ -136,10 +136,10 @@ echo "Log into master node"
 ssh -T -o "StrictHostKeyChecking no" ${adminusername}@${hostname} << 'EOF'
 
 echo "Build accumulo jar"
-BUILD-DIR="webscale-ai-test"
+BUILD_DIR="webscale-ai-test"
 cd ~
-mkdir ${BUILD-DIR}
-cd ${BUILD-DIR}
+mkdir ${BUILD_DIR}
+cd ${BUILD_DIR}
 wget https://roalexan.blob.core.windows.net/webscale-ai/accumulo_scala.yaml
 wget https://roalexan.blob.core.windows.net/webscale-ai/pom.xml
 mvn clean package -P create-shade-jar
@@ -163,7 +163,7 @@ echo "Install krb5-devel"
 sudo yum install -y krb5-devel
 
 echo "Create conda environment"
-cd ~/{BUILD-DIR}
+cd ~/{BUILD_DIR}
 conda env create -f accumulo_scala.yaml
 
 echo "Activate conda environment"
@@ -186,10 +186,10 @@ jupyter toree install \
         --executor-cores 4 \
         --num-executors 64"
 	
-DATA-FILE="sentiment140_prefix.csv"
-wget https://roalexan.blob.core.windows.net/webscale-ai/${DATA-FILE}
+DATA_FILE="sentiment140_prefix.csv"
+wget https://roalexan.blob.core.windows.net/webscale-ai/${DATA_FILE}
 hdfs dfs -mkdir -p /user/${adminUsername}
-hdfs dfs -put ${DATA-FILE} ${DATA-FILE}
+hdfs dfs -put ${DATA_FILE} ${DATA_FILE}
 hdfs dfs -ls /user/${adminUsername}
 wget https://roalexan.blob.core.windows.net/webscale-ai/accumulo-client.properties
 wget https://roalexan.blob.core.windows.net/webscale-ai/baseline_colocated_spark_train.ipynb
