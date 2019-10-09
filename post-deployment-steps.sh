@@ -163,7 +163,7 @@ echo "Install krb5-devel"
 sudo yum install -y krb5-devel
 
 echo "Create conda environment"
-cd ~/{BUILD_DIR}
+#cd ~/{BUILD_DIR}
 conda env create -f accumulo_scala.yaml
 
 echo "Activate conda environment"
