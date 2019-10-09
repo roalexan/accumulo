@@ -113,20 +113,15 @@ echo "Restart scale set"
 az vmss restart --resource-group ${resourcegroup} --name ${nameserviceid}
 
 echo "start zookeepers"
-counter=1
+head -3 ~/fluo-muchos/conf/hosts/${nameserviceid} |
 while read hostname ipaddress
 do
-        echo "start zookeeper - hostname: ${hostname}, ipaddress: ${ipaddress}"
-	ssh -o "StrictHostKeyChecking no" ${adminusername}@${hostname} "~/install/zookeeper-3.4.14/bin/zkServer.sh start"
-        ((counter++))
-        if [ $counter -gt 3 ]
-        then
-                break
-        fi
-done < ~/fluo-muchos/conf/hosts/${nameserviceid}
+	echo "start zookeeper - hostname: ${hostname}, ipaddress: ${ipaddress}"
+        ssh -n -o "StrictHostKeyChecking no" ${adminusername}@${hostname} "~/install/zookeeper-3.4.14/bin/zkServer.sh start"
+done
 
 read hostname ipaddress < ~/fluo-muchos/conf/hosts/${nameserviceid}
-echo "hostname: ${hostname}, ipaddress: ${ipaddress}"
+echo "master - hostname: ${hostname}, ipaddress: ${ipaddress}"
 
 echo "start dfs"
 ssh -o "StrictHostKeyChecking no" ${adminusername}@${hostname} "~/install/hadoop-3.2.0/sbin/start-dfs.sh"
