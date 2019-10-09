@@ -192,7 +192,9 @@ hdfs dfs -mkdir -p /user/${adminUsername}
 hdfs dfs -put ${DATA_FILE} ${DATA_FILE}
 hdfs dfs -ls /user/${adminUsername}
 cp ${HOME}/install/accumulo-2.0.0/conf/accumulo-client.properties .
-wget https://roalexan.blob.core.windows.net/webscale-ai/baseline_colocated_spark_train.ipynb
-jupyter nbconvert --execute baseline_colocated_spark_train.ipynb
+NOTEBOOK_FILE="baseline_colocated_spark_train.ipynb"
+wget https://roalexan.blob.core.windows.net/webscale-ai/${NOTEBOOK_FILE}
+#jupyter nbconvert --execute baseline_colocated_spark_train.ipynb
+papermill ${NOTEBOOK_FILE} out.ipynb
 
 EOF
