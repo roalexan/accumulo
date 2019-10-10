@@ -144,11 +144,6 @@ wget https://roalexan.blob.core.windows.net/webscale-ai/accumulo_scala.yaml
 wget https://roalexan.blob.core.windows.net/webscale-ai/pom.xml
 mvn clean package -P create-shade-jar
 
-#echo "Install conda"
-#cd /tmp
-#curl -O https://repo.anaconda.com/archive/Anaconda3-5.3.1-Linux-x86_64.sh
-#bash Anaconda3-5.3.1-Linux-x86_64.sh -b
-
 echo "Install Anaconda"
 ANACONDA="https://repo.continuum.io/miniconda/Miniconda3-4.6.14-Linux-x86_64.sh"
 curl ${ANACONDA} -o anaconda.sh
@@ -163,7 +158,6 @@ echo "Install krb5-devel"
 sudo yum install -y krb5-devel
 
 echo "Create conda environment"
-#cd ~/{BUILD_DIR}
 conda env create -f accumulo_scala.yaml
 
 echo "Activate conda environment"
@@ -194,7 +188,13 @@ hdfs dfs -ls /user/${adminUsername}
 cp ${HOME}/install/accumulo-2.0.0/conf/accumulo-client.properties .
 NOTEBOOK_FILE="baseline_colocated_spark_train.ipynb"
 wget https://roalexan.blob.core.windows.net/webscale-ai/${NOTEBOOK_FILE}
-#jupyter nbconvert --execute baseline_colocated_spark_train.ipynb
-papermill ${NOTEBOOK_FILE} out.ipynb
+papermill ${NOTEBOOK_FILE} results.ipynb -p DATA_SIZE 1G
+
+echo "Get results from HDFS"
+hdfs dfs -get /user/${adminUsername}/results/*.csv .
+echo "Install AzureML SDK"
+pip install --upgrade azureml-sdk
+
+echo "spappid: ${spappid}"
 
 EOF
