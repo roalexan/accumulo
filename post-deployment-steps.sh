@@ -133,7 +133,7 @@ echo "start accumulo"
 ssh -o "StrictHostKeyChecking no" ${adminusername}@${hostname} "~/install/accumulo-2.0.0/bin/accumulo-cluster start"
 
 echo "Log into master node"
-ssh -T -o "StrictHostKeyChecking no" ${adminusername}@${hostname} << 'EOF'
+ssh -T -o "StrictHostKeyChecking no" ${adminusername}@${hostname} << EOF
 
 echo "Build accumulo jar"
 BUILD_DIR="webscale-ai-test"
