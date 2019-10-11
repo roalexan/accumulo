@@ -157,6 +157,9 @@ source ~/.bashrc
 echo "Install krb5-devel"
 sudo yum install -y krb5-devel
 
+echo "Install AzureML SDK"
+pip install --upgrade azureml-sdk
+
 echo "Create conda environment"
 conda env create -f accumulo_scala.yaml
 
@@ -192,8 +195,6 @@ papermill ${NOTEBOOK_FILE} results.ipynb -p DATA_SIZE 1G
 
 echo "Get results from HDFS"
 hdfs dfs -get /user/${adminUsername}/results/*.csv .
-echo "Install AzureML SDK"
-pip install --upgrade azureml-sdk
 
 echo "spappid: ${spappid}"
 
