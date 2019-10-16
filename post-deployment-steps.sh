@@ -141,6 +141,7 @@ ssh -o "StrictHostKeyChecking no" ${adminusername}@${hostname} "~/install/accumu
 
 echo "Log into master node"
 # https://unix.stackexchange.com/questions/423392/bad-substitution-no-closing-in-a-heredoc-eof#423393
+# https://stackoverflow.com/questions/4937792/using-variables-inside-a-bash-heredoc
 ssh -T -o "StrictHostKeyChecking no" ${adminusername}@${hostname} << EOF
 
 echo "Build accumulo jar"
@@ -202,12 +203,12 @@ hdfs dfs -ls /user/\${adminUsername}
 cp \${HOME}/install/accumulo-2.0.0/conf/accumulo-client.properties .
 NOTEBOOK_FILE="baseline_colocated_spark_train.ipynb"
 wget https://roalexan.blob.core.windows.net/webscale-ai/\${NOTEBOOK_FILE}
-papermill \${NOTEBOOK_FILE} results.ipynb -p DATA_SIZE \${dataSize}
+papermill \${NOTEBOOK_FILE} results.ipynb -p DATA_SIZE ${dataSize}
 
 echo "Get results from HDFS"
 hdfs dfs -get /user/\${adminUsername}/results/*.csv .
 
-echo "spappid: \${spappid}"
-echo "dataSize: \${dataSize}"
+echo "spappid: ${spappid}"
+echo "dataSize: ${dataSize}"
 
 EOF
