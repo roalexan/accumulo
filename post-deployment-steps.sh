@@ -155,11 +155,11 @@ mvn clean package -P create-shade-jar
 echo "Install Anaconda"
 ANACONDA="https://repo.continuum.io/miniconda/Miniconda3-4.6.14-Linux-x86_64.sh"
 curl \${ANACONDA} -o anaconda.sh
-/bin/bash anaconda.sh -b -p ${HOME}/conda
+/bin/bash anaconda.sh -b -p \${HOME}/conda
 rm anaconda.sh
-echo ". ${HOME}/conda/etc/profile.d/conda.sh" >> ~/.bashrc
+echo ". \${HOME}/conda/etc/profile.d/conda.sh" >> ~/.bashrc
 echo "conda activate base" >> ~/.bashrc
-PATH="${HOME}/conda/bin:${PATH}"
+PATH=\${HOME}/conda/bin:\${PATH}
 source ~/.bashrc
 
 echo "Install krb5-devel"
@@ -168,6 +168,9 @@ sudo yum install -y krb5-devel
 echo "Install AzureML SDK"
 pip install --upgrade azureml-sdk
 
+echo "Install papermill"
+pip install papermill
+
 echo "Create conda environment"
 conda env create -f accumulo_scala.yaml
 
@@ -175,14 +178,14 @@ echo "Activate conda environment"
 conda activate accumulo
 
 echo "Create jupyter kernel"
-adminUsername=$(whoami)
+adminUsername=\$(whoami)
 JAR="file:////home/\${adminUsername}/webscale-ai-test/target/accumulo-spark-shaded.jar"
 echo "JAR: \${JAR}"
 jupyter toree install \
     --replace \
     --user \
     --kernel_name=accumulo \
-    --spark_home=${SPARK_HOME} \
+    --spark_home=\${SPARK_HOME} \
     --spark_opts="--master yarn --jars \${JAR} \
         --packages com.microsoft.ml.spark:mmlspark_2.11:0.18.1 \
         --driver-memory 16g \
@@ -196,7 +199,7 @@ wget https://roalexan.blob.core.windows.net/webscale-ai/\${DATA_FILE}
 hdfs dfs -mkdir -p /user/\${adminUsername}
 hdfs dfs -put \${DATA_FILE} \${DATA_FILE}
 hdfs dfs -ls /user/\${adminUsername}
-cp ${HOME}/install/accumulo-2.0.0/conf/accumulo-client.properties .
+cp \${HOME}/install/accumulo-2.0.0/conf/accumulo-client.properties .
 NOTEBOOK_FILE="baseline_colocated_spark_train.ipynb"
 wget https://roalexan.blob.core.windows.net/webscale-ai/\${NOTEBOOK_FILE}
 papermill \${NOTEBOOK_FILE} results.ipynb -p DATA_SIZE \${dataSize}
