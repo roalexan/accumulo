@@ -208,7 +208,4 @@ papermill \${NOTEBOOK_FILE} results.ipynb -p DATA_SIZE ${dataSize}
 echo "Get results from HDFS"
 hdfs dfs -get /user/\${adminUsername}/results/*.csv .
 
-echo "spappid: ${spappid}"
-echo "dataSize: ${dataSize}"
-
 EOF
