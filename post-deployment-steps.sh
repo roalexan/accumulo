@@ -141,20 +141,20 @@ ssh -o "StrictHostKeyChecking no" ${adminusername}@${hostname} "~/install/accumu
 
 echo "Log into master node"
 # https://unix.stackexchange.com/questions/423392/bad-substitution-no-closing-in-a-heredoc-eof#423393
-ssh -T -o "StrictHostKeyChecking no" ${adminusername}@${hostname} <<\EOF
+ssh -T -o "StrictHostKeyChecking no" ${adminusername}@${hostname} << EOF
 
 echo "Build accumulo jar"
 BUILD_DIR="webscale-ai-test"
 cd ~
-mkdir ${BUILD_DIR}
-cd ${BUILD_DIR}
+mkdir \${BUILD_DIR}
+cd \${BUILD_DIR}
 wget https://roalexan.blob.core.windows.net/webscale-ai/accumulo_scala.yaml
 wget https://roalexan.blob.core.windows.net/webscale-ai/pom.xml
 mvn clean package -P create-shade-jar
 
 echo "Install Anaconda"
 ANACONDA="https://repo.continuum.io/miniconda/Miniconda3-4.6.14-Linux-x86_64.sh"
-curl ${ANACONDA} -o anaconda.sh
+curl \${ANACONDA} -o anaconda.sh
 /bin/bash anaconda.sh -b -p ${HOME}/conda
 rm anaconda.sh
 echo ". ${HOME}/conda/etc/profile.d/conda.sh" >> ~/.bashrc
@@ -176,14 +176,14 @@ conda activate accumulo
 
 echo "Create jupyter kernel"
 adminUsername=$(whoami)
-JAR="file:////home/${adminUsername}/webscale-ai-test/target/accumulo-spark-shaded.jar"
-echo "JAR: ${JAR}"
+JAR="file:////home/\${adminUsername}/webscale-ai-test/target/accumulo-spark-shaded.jar"
+echo "JAR: \${JAR}"
 jupyter toree install \
     --replace \
     --user \
     --kernel_name=accumulo \
     --spark_home=${SPARK_HOME} \
-    --spark_opts="--master yarn --jars ${JAR} \
+    --spark_opts="--master yarn --jars \${JAR} \
         --packages com.microsoft.ml.spark:mmlspark_2.11:0.18.1 \
         --driver-memory 16g \
         --executor-memory 12g \
@@ -192,19 +192,19 @@ jupyter toree install \
         --num-executors 64"
 	
 DATA_FILE="sentiment140_prefix.csv"
-wget https://roalexan.blob.core.windows.net/webscale-ai/${DATA_FILE}
-hdfs dfs -mkdir -p /user/${adminUsername}
-hdfs dfs -put ${DATA_FILE} ${DATA_FILE}
-hdfs dfs -ls /user/${adminUsername}
+wget https://roalexan.blob.core.windows.net/webscale-ai/\${DATA_FILE}
+hdfs dfs -mkdir -p /user/\${adminUsername}
+hdfs dfs -put \${DATA_FILE} \${DATA_FILE}
+hdfs dfs -ls /user/\${adminUsername}
 cp ${HOME}/install/accumulo-2.0.0/conf/accumulo-client.properties .
 NOTEBOOK_FILE="baseline_colocated_spark_train.ipynb"
-wget https://roalexan.blob.core.windows.net/webscale-ai/${NOTEBOOK_FILE}
-papermill ${NOTEBOOK_FILE} results.ipynb -p DATA_SIZE ${dataSize}
+wget https://roalexan.blob.core.windows.net/webscale-ai/\${NOTEBOOK_FILE}
+papermill \${NOTEBOOK_FILE} results.ipynb -p DATA_SIZE \${dataSize}
 
 echo "Get results from HDFS"
-hdfs dfs -get /user/${adminUsername}/results/*.csv .
+hdfs dfs -get /user/\${adminUsername}/results/*.csv .
 
-echo "spappid: ${spappid}"
-echo "dataSize: ${dataSize}"
+echo "spappid: \${spappid}"
+echo "dataSize: \${dataSize}"
 
 EOF
