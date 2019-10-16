@@ -11,7 +11,7 @@ exec 2>&1
 
 date
 echo "Read the options"
-TEMP=`getopt -o a:p:t:s:g:n:u --long spappid:,sppassword:,sptenantid:,subscription:,resource-group:,nameserviceid:,admin-username: -- "$@"`
+TEMP=`getopt -o a:p:t:s:g:n:u:d --long spappid:,sppassword:,sptenantid:,subscription:,resource-group:,nameserviceid:,admin-username:,data-size: -- "$@"`
 eval set -- "$TEMP"
 
 echo "Extract options and their arguments into variables"
@@ -31,6 +31,8 @@ while true ; do
             nameserviceid=$2 ; shift 2;;
         -u|--admin-username)
             adminusername=$2 ; shift 2;;
+        -d|--data-size)
+            dataSize=$2 ; shift 2;;
         --) shift ; break ;;
         *) echo "ERROR: Unable to get variables from arguments" ; exit 1 ;;
     esac
@@ -68,6 +70,11 @@ fi
 if [ -z "$adminusername" ]
 then
     echo "Missing required argument: -u | admin-username"
+    exit 1
+fi
+if [ -z "$dataSize" ]
+then
+    echo "Missing required argument: -d | data-size"
     exit 1
 fi
 
@@ -191,11 +198,12 @@ hdfs dfs -ls /user/${adminUsername}
 cp ${HOME}/install/accumulo-2.0.0/conf/accumulo-client.properties .
 NOTEBOOK_FILE="baseline_colocated_spark_train.ipynb"
 wget https://roalexan.blob.core.windows.net/webscale-ai/${NOTEBOOK_FILE}
-papermill ${NOTEBOOK_FILE} results.ipynb -p DATA_SIZE 1G
+papermill ${NOTEBOOK_FILE} results.ipynb -p DATA_SIZE ${$dataSize}
 
 echo "Get results from HDFS"
 hdfs dfs -get /user/${adminUsername}/results/*.csv .
 
 echo "spappid: ${spappid}"
+echo "dataSize: ${dataSize}"
 
 EOF
