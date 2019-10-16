@@ -199,7 +199,7 @@ hdfs dfs -ls /user/${adminUsername}
 cp ${HOME}/install/accumulo-2.0.0/conf/accumulo-client.properties .
 NOTEBOOK_FILE="baseline_colocated_spark_train.ipynb"
 wget https://roalexan.blob.core.windows.net/webscale-ai/${NOTEBOOK_FILE}
-papermill ${NOTEBOOK_FILE} results.ipynb -p DATA_SIZE ${$dataSize}
+papermill ${NOTEBOOK_FILE} results.ipynb -p DATA_SIZE ${dataSize}
 
 echo "Get results from HDFS"
 hdfs dfs -get /user/${adminUsername}/results/*.csv .
