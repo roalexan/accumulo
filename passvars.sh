@@ -1,3 +1,4 @@
+#!/bin/bash
 cd ~
 rm --force ./passvars.log
 exec > >(tee --append ./passvars.log)
