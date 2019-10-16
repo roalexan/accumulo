@@ -140,6 +140,7 @@ echo "start accumulo"
 ssh -o "StrictHostKeyChecking no" ${adminusername}@${hostname} "~/install/accumulo-2.0.0/bin/accumulo-cluster start"
 
 echo "Log into master node"
+# https://unix.stackexchange.com/questions/423392/bad-substitution-no-closing-in-a-heredoc-eof#423393
 ssh -T -o "StrictHostKeyChecking no" ${adminusername}@${hostname} <<\EOF
 
 echo "Build accumulo jar"
