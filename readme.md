@@ -19,7 +19,7 @@ This template deploys Azure Synapse workspace with underlying Data Lake Storage.
 | tagValues | no | resource tags |
 | keyVaultKeyUri | no | customer-managed key uri from Key Vault for double encryption |
 
-NOTE: If you want to provide a customer-managed key (CMK) from Key Vault for double encryption, you can get the uri from the portal. See [here](https://docs.microsoft.com/en-us/azure/key-vault/secrets/quick-create-portal#retrieve-a-secret-from-key-vault) for details on how to get the uri, and [here](https://docs.microsoft.com/en-us/azure/synapse-analytics/security/workspaces-encryption) for more information on encryption in Azure Synapse in general.
+NOTE: If you want to provide a customer-managed key (CMK) from Key Vault for double encryption, you can get the uri from the portal. See [here](https://docs.microsoft.com/en-us/azure/key-vault/secrets/quick-create-portal#retrieve-a-secret-from-key-vault) for details on how to get the uri and [here](https://docs.microsoft.com/en-us/azure/synapse-analytics/security/workspaces-encryption) for more information on encryption in Azure Synapse in general.
 
 ---
 
