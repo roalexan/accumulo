@@ -9,6 +9,8 @@ This template deploys Azure Synapse workspace with underlying Data Lake Storage.
 <img src="https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.png"/>
 </a>
 
+## Parameters
+
 | name | required | description |
 --- | --- | ---
 | name | yes | name to use for your new Azure Synapse workspace and Data Lake Storage account |
